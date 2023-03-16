@@ -31,5 +31,7 @@ def Cnt_Num( n ):
     print(cnt)
 
 if __name__ == '__main__':
-    Cnt_Num( 3)
+    Cnt_Num(3)
+
+
 
