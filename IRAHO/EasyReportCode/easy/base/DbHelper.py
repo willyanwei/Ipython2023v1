@@ -11,8 +11,6 @@ import pandas as pd
 # from pyhive import hive
 import pymysql
 
-# DB_Info.ini配置文件所在位置
-db_info_file = "DB_info.ini"
 
 # DB_info信息
 class DBInfo():
@@ -27,9 +25,10 @@ class DBInfo():
         self.dbpassword = dbpassword
         self.dbname = dbname
 
+
 # 获取DBInfo
 class GetDBInfo():
-    def getMysqlDBInfo(self, Dsn, isdec = False):
+    def getMysqlDBInfo(self, Dsn, db_info_file):
         db_config = configparser.ConfigParser()
         db_config.read(db_info_file)
         di = DBInfo(db_config[Dsn]['dbtype'],
@@ -42,9 +41,9 @@ class GetDBInfo():
 
 
 class QueryDB():
-    def queryMysqlDB(self, Dsn, Sql):
-        di = GetDBInfo().getMysqlDBInfo(Dsn)
-        connection = pymysql.connect(user= di.dbuser,
+    def queryMysqlDB(self, Dsn, Sql, db_info_file):
+        di = GetDBInfo().getMysqlDBInfo(Dsn, db_info_file)
+        connection = pymysql.connect(user=di.dbuser,
                                      password=di.dbpassword,
                                      host=di.host,
                                      database=di.dbname,
@@ -62,37 +61,30 @@ class QueryDB():
         """如果数据库的类型在DB_info.ini配置中找不到，则抛出异常"""
         raise Exception("未定义" + di.dbtype + "类型数据库的查询方法...")
 
-
-    def __call__(self, Dsn, Sql):
-        di = GetDBInfo(Dsn)
+    def __call__(self, Dsn, Sql, db_info_file):
+        di = GetDBInfo(Dsn, db_info_file)
         switcher = {'SQLITE': self.queryMysqlDB()}
         print(f"swotcher输出为：{switcher}")
-        func = switcher.get(di.dbtype.upper(),lambda x,y: self.queryError(di, Sql))
+        # func = switcher.get(di.dbtype.upper(), lambda x, y: self.queryError(di, Sql))
 
-"""尝试登录MYSQL并查询数据"""
+# """尝试登录MYSQL并查询数据"""
 # sql = "show databases;"
 # qd = QueryDB().queryMysqlDB("MYSQL", sql)
 # print(qd)
 
-
-class CommitDB():
-    def commitMysqlDB(self, Dsn, Sql):
-        di = GetDBInfo().getMysqlDBInfo(Dsn)
-        connection = pymysql.connect(user= di.dbuser,
-                                     password=di.dbpassword,
-                                     host=di.host,
-                                     database=di.dbname,
-                                     port=int(di.dbport))
-        cur = connection.cursor()
-        cur.execute(Sql)
-        cur.execute('commit')
-        connection.close()
-        print("commit成功")
-#
+# class CommitDB():
+#     def commitMysqlDB(self, Dsn, Sql):
+#         di = GetDBInfo().getMysqlDBInfo(Dsn)
+#         connection = pymysql.connect(user= di.dbuser,
+#                                      password=di.dbpassword,
+#                                      host=di.host,
+#                                      database=di.dbname,
+#                                      port=int(di.dbport))
+#         cur = connection.cursor()
+#         cur.execute(Sql)
+#         cur.execute('commit')
+#         connection.close()
+#         print("commit成功")
+# #
 # sql = "CREATE database if not exists jd_db_new;"
 # cd = CommitDB().commitMysqlDB("MYSQL", sql)
-
-
-
-
-
