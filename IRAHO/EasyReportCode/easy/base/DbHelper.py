@@ -12,25 +12,26 @@ import pandas as pd
 import pymysql
 
 # DB_Info.ini配置文件所在位置
-db_info_path = "DB_info.ini"
+db_info_file = "DB_info.ini"
 
 # DB_info信息
 class DBInfo():
     def __init__(self, dbtype, host, dbport, dbuser, dbpassword, dbname):
         # 在_init_ 方法内部使用 self 属性名 = 属性的初始值 就可以 定义属性；
         # 定义属性之后，再使用 Cat 类创建的对象，都会拥有该属性
-        print("数据库配置信息如下：")
+        # print("数据库配置信息如下：")
         self.dbtype = dbtype
         self.host = host
         self.dbport = dbport
         self.dbuser = dbuser
         self.dbpassword = dbpassword
         self.dbname = dbname
+
 # 获取DBInfo
 class GetDBInfo():
     def getMysqlDBInfo(self, Dsn, isdec = False):
         db_config = configparser.ConfigParser()
-        db_config.read(db_info_path)
+        db_config.read(db_info_file)
         di = DBInfo(db_config[Dsn]['dbtype'],
                     db_config[Dsn]['host'],
                     db_config[Dsn]['dbport'],
@@ -68,11 +69,11 @@ class QueryDB():
         print(f"swotcher输出为：{switcher}")
         func = switcher.get(di.dbtype.upper(),lambda x,y: self.queryError(di, Sql))
 
-
 """尝试登录MYSQL并查询数据"""
 # sql = "show databases;"
 # qd = QueryDB().queryMysqlDB("MYSQL", sql)
 # print(qd)
+
 
 class CommitDB():
     def commitMysqlDB(self, Dsn, Sql):

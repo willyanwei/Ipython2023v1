@@ -7,7 +7,6 @@
 
 from IRAHO.EasyReportCode.easy.base.DbHelper import *
 
-sql = "show databases;"
-qd = QueryDB().queryMysqlDB("MYSQL", sql)
+sql = 'show databases;'
+qd = QueryDB().queryMysqlDB('MYSQL',  sql)
 print(qd)
-
